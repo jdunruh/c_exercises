@@ -51,17 +51,21 @@ struct node *insert(struct node *tree, struct node *newel)
 /* delete a key from the tree. No change if not found */
 struct node *delete(struct node *tree, int key)
 { /* need to free tree to avoid memory leak */
+  struct node *hold;
      if(tree->key == key) {
               if(tree->right == NULL)
-                 return(tree->left);
-              if(tree->left == NULL)
-                 return(tree->right);
-              return insert(tree->right, tree->left);
-           }
-     if(key < tree->key)
-          return delete(tree->left, key);
+                 hold = tree->left;
+              else if(tree->left == NULL)
+                 hold = tree->right;
+              else
+                hold = insert(tree->right, tree->left);
+              free(tree);
+           } else
+       if(key < tree->key)
+          hold =  delete(tree->left, key);
      else
-          return delete(tree->left, key);
+          hold =delete(tree->right, key);
+     return hold;
      }
 
 /* find key. returns node containing key or NULL if not found */
